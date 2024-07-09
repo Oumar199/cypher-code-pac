@@ -1,0 +1,6 @@
+Metadata-Version: 2.1
+Name: cypher-codegen
+Version: 0.0.1
+Summary: Contain function and classes to tune and fine tune codegen model.
+Author: Oumar Kane
+Author-email: oumar.kane@univ-thies.sn

@@ -1,0 +1,12 @@
+transformers
+evaluate
+pytorch-lightning==1.9.0
+torch
+rouge_score
+sacrebleu
+loralib
+peft
+pandas
+numpy
+wandb
+matplotlib
