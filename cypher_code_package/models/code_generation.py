@@ -190,12 +190,12 @@ class CodeGeneration(pl.LightningModule):
 
         loss, y_pred = self(batch)
 
-        inputs = self.tokenizer.batch_decode(
+        references = self.tokenizer.batch_decode(
             batch["input_ids"], skip_special_tokens=True
         )
-        inputs = [text.split(self.splitter)[0] + self.splitter for text in inputs]
+        references = [text.split(self.splitter)[0] + self.splitter for text in references]
 
-        inputs = self.tokenizer(inputs, return_tensors="pt", padding="longest")
+        inputs = self.tokenizer(references, return_tensors="pt", padding="longest")
 
         # generate predictions
         predictions = self.model.generate(
@@ -209,13 +209,7 @@ class CodeGeneration(pl.LightningModule):
         labels = self.tokenizer.batch_decode(batch["labels"], skip_special_tokens=True)
 
         predictions = [pred.strip().split(self.splitter)[1] for pred in predictions]
-        labels = [label.strip() for label in labels]
-        references = [
-            ref.strip()
-            for ref in self.tokenizer.batch_decode(
-                batch["input_ids"], skip_special_tokens=True
-            )
-        ]
+        labels = [label.strip().split(self.splitter)[1] for label in labels]
 
         self.predictions["Source references"].extend(references)
         self.predictions["Predictions"].extend(predictions)
