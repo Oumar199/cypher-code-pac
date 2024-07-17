@@ -209,6 +209,7 @@ class CodeGeneration(pl.LightningModule):
         labels = self.tokenizer.batch_decode(batch["labels"], skip_special_tokens=True)
 
         predictions = [pred.strip().split(self.splitter)[1] for pred in predictions]
+        print(labels[0])
         labels = [label.strip().split(self.splitter)[1] for label in labels]
 
         self.predictions["Source references"].extend(references)
