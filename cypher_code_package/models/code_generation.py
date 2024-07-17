@@ -139,9 +139,13 @@ class CodeGeneration(pl.LightningModule):
             inputs = self.tokenizer.batch_decode(
                 batch["input_ids"], skip_special_tokens=True
             )
-            inputs = [text.split(self.splitter)[0] + self.splitter for text in inputs]
+            references = self.tokenizer.batch_decode(
+                batch["input_ids"], skip_special_tokens=True
+            )
+            
+            references = [text.split(self.splitter)[0] + self.splitter if self.splitter in text else text + self.splitter  for text in references]
 
-            inputs = self.tokenizer(inputs, return_tensors="pt", padding="longest")
+            inputs = self.tokenizer(references, return_tensors="pt", padding="longest")
 
             # generate predictions
             predictions = self.model.generate(
@@ -158,7 +162,9 @@ class CodeGeneration(pl.LightningModule):
                 batch["labels"], skip_special_tokens=True
             )
 
-            predictions = [pred.strip().split(self.splitter)[1] for pred in predictions]
+            predictions = [pred.strip().split(self.splitter)[1] if self.splitter in pred else "" for pred in predictions]
+        
+            labels = [label.strip().split(self.splitter)[1] if self.splitter in label else "" for label in labels]
 
             # get bleu metric
             bleu = self.bleu.compute(
