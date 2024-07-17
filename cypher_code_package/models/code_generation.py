@@ -210,9 +210,6 @@ class CodeGeneration(pl.LightningModule):
 
         predictions = [pred.strip().split(self.splitter)[1] if self.splitter in pred else "" for pred in predictions]
         
-        for label in labels:
-            
-            if not self.splitter in label: print(label, self.splitter); print("\n")
         labels = [label.strip().split(self.splitter)[1] if self.splitter in label else "" for label in labels]
 
         self.predictions["Source references"].extend(references)
