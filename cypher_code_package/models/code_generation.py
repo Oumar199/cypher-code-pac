@@ -193,7 +193,7 @@ class CodeGeneration(pl.LightningModule):
         references = self.tokenizer.batch_decode(
             batch["input_ids"], skip_special_tokens=True
         )
-        references = [text.split(self.splitter)[0] if self.splitter in text + self.splitter for text in references]
+        references = [text.split(self.splitter)[0] + self.splitter if self.splitter in text else text + self.splitter  for text in references]
 
         inputs = self.tokenizer(references, return_tensors="pt", padding="longest")
 
