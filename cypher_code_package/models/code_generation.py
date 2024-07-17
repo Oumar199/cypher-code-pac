@@ -41,7 +41,7 @@ class CodeGeneration(pl.LightningModule):
         bias="none",
         max_new_tokens=200,
         predict_with_generate=True,
-        splitter="Code Cypher::",
+        splitter="Code Cypher ::",
         padding_side="left",
         num_beams=1,
     ):
