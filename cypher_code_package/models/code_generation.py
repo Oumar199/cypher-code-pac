@@ -199,6 +199,13 @@ class CodeGeneration(pl.LightningModule):
         references = self.tokenizer.batch_decode(
             batch["input_ids"], skip_special_tokens=True
         )
+        print("refs")
+        for text in references:
+            
+            if not self.splitter in text:
+                print(text)
+                print("---------------")
+        
         references = [text.split(self.splitter)[0] + self.splitter if self.splitter in text else text + self.splitter  for text in references]
 
         inputs = self.tokenizer(references, return_tensors="pt", padding="longest")
@@ -213,7 +220,12 @@ class CodeGeneration(pl.LightningModule):
         # decode the labels
         predictions = self.tokenizer.batch_decode(predictions, skip_special_tokens=True)
         labels = self.tokenizer.batch_decode(batch["labels"], skip_special_tokens=True)
-
+        print("labels")
+        for text in labels:
+            
+            if not self.splitter in text:
+                print(text)
+                print("---------------")
         predictions = [pred.strip().split(self.splitter)[1] if self.splitter in pred else "" for pred in predictions]
         
         labels = [label.strip().split(self.splitter)[1] if self.splitter in label else "" for label in labels]
