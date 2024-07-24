@@ -28,7 +28,7 @@ def load_data(model_name, data_dir, test_size, valid_size, seed):
     # split dataset between train, validation, and test sets
     train, test = train_test_split(legal_cypher, test_size=test_size + valid_size, random_state=seed)
 
-    valid, test = train_test_split(test, test_size=(test_size * 100) / (valid_size + test_size), random_state=seed)
+    valid, test = train_test_split(test, test_size=test_size / (valid_size + test_size), random_state=seed)
 
     dataset = {
         "train": Dataset.from_dict(
