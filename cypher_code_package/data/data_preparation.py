@@ -252,5 +252,11 @@ def get_loaders(
                 num_workers=num_workers,
                 pin_memory=True if device in ["cuda", "gpu"] else False,
             )
-
-    return train_loader, valid_loader, test_loader
+    
+    if 'train' in dataset and 'valid' in dataset:
+        
+        return train_loader, valid_loader, test_loader
+    
+    else:
+        
+        return test_loader
