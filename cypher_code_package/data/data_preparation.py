@@ -14,7 +14,7 @@ from cypher_code_package import (
 )
 
 
-def load_data(model_name, data_dir, test_size, seed):
+def load_data(model_name, data_dir, test_size, valid_size, seed):
 
     # load the legal dataset with pandas
     legal_cypher = pd.read_csv(data_dir)
@@ -26,9 +26,9 @@ def load_data(model_name, data_dir, test_size, seed):
     legal_cypher["contenu"] = legal_cypher["contenu"].map(lambda x: x.replace("’", "'"))
 
     # split dataset between train, validation, and test sets
-    train, test = train_test_split(legal_cypher, test_size=test_size, random_state=seed)
+    train, test = train_test_split(legal_cypher, test_size=test_size + valid_size, random_state=seed)
 
-    valid, test = train_test_split(test, test_size=0.5, random_state=seed)
+    valid, test = train_test_split(test, test_size=(test_size * 100) / (valid_size + test_size), random_state=seed)
 
     dataset = {
         "train": Dataset.from_dict(
@@ -141,6 +141,7 @@ def get_loaders(
     sizes,
     data_dir,
     test_size,
+    valid_size,
     seed,
     count,
     num_workers,
@@ -152,7 +153,7 @@ def get_loaders(
     tokenizer = get_tokenizer(model_name)
 
     # get dataset
-    dataset = load_data(model_name, data_dir, test_size, seed)
+    dataset = load_data(model_name, data_dir, test_size, valid_size, seed)
 
     if use_bucketing:
         # get boundaries
