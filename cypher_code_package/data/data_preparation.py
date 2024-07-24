@@ -55,8 +55,7 @@ def load_data(model_name, data_dir, test_size, valid_size, seed):
 
         text_start = "Legal text ::\n\n"
         code_start = "\n\nCode Cypher ::\n\n"
-        print(example['text'])
-        print(example['label'])
+        
         prompt = text_start + example["text"] + code_start + example["label"]
         tokens = tokenizer(prompt, return_tensors="pt")
         example["input_ids"] = tokens.input_ids[0]
