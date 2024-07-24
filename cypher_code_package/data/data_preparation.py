@@ -255,8 +255,8 @@ def get_loaders(
     
     if 'train' in dataset and 'valid' in dataset:
         
-        return train_loader, valid_loader, test_loader
+        return {'train_loader': train_loader, 'valid_loader': valid_loader, 'test_loader': test_loader}
     
     else:
         
-        return test_loader
+        return {'test_loader': test_loader}
