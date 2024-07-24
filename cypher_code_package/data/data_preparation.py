@@ -26,17 +26,25 @@ def load_data(model_name, data_dir, test_size, valid_size, seed):
     legal_cypher["contenu"] = legal_cypher["contenu"].map(lambda x: x.replace("’", "'"))
 
     # split dataset between train, validation, and test sets
-    train, test = train_test_split(legal_cypher, test_size=test_size + valid_size, random_state=seed)
+    if test_size == 1.:
+        
+        dataset = {
+            "test": Dataset.from_dict({"label": legal_cypher["cypher"], "text": legal_cypher["contenu"]}),
+        }
+    
+    else:
+        
+        train, test = train_test_split(legal_cypher, test_size=test_size + valid_size, random_state=seed)
 
-    valid, test = train_test_split(test, test_size=test_size / (valid_size + test_size), random_state=seed)
+        valid, test = train_test_split(test, test_size=test_size / (valid_size + test_size), random_state=seed)
 
-    dataset = {
-        "train": Dataset.from_dict(
-            {"label": train["cypher"], "text": train["contenu"]}
-        ),
-        "val": Dataset.from_dict({"label": valid["cypher"], "text": valid["contenu"]}),
-        "test": Dataset.from_dict({"label": test["cypher"], "text": test["contenu"]}),
-    }
+        dataset = {
+            "train": Dataset.from_dict(
+                {"label": train["cypher"], "text": train["contenu"]}
+            ),
+            "val": Dataset.from_dict({"label": valid["cypher"], "text": valid["contenu"]}),
+            "test": Dataset.from_dict({"label": test["cypher"], "text": test["contenu"]}),
+        }
 
     dataset = DatasetDict(dataset)
 
@@ -161,7 +169,7 @@ def get_loaders(
 
         # remove unnecessary columns
         dataset = dataset.remove_columns(["text", "label"])
-
+        
         # initialize loaders
         train_sampler = SequenceLengthBatchSampler(
             dataset["train"],
@@ -212,28 +220,36 @@ def get_loaders(
 
     else:
 
-        # define data loaders
-        train_loader = DataLoader(
-            dataset["train"],
-            batch_size=batch_size,
-            collate_fn=partial(pad_collate, padding_value=tokenizer.pad_token_id),
-            num_workers=num_workers,
-            pin_memory=True if device in ["cuda", "gpu"] else False,
-            shuffle=True,
-        )
-        valid_loader = DataLoader(
-            dataset["val"],
-            batch_size=batch_size,
-            collate_fn=partial(pad_collate, padding_value=tokenizer.pad_token_id),
-            num_workers=num_workers,
-            pin_memory=True if device in ["cuda", "gpu"] else False,
-        )
-        test_loader = DataLoader(
-            dataset["test"],
-            batch_size=batch_size,
-            collate_fn=partial(pad_collate, padding_value=tokenizer.pad_token_id),
-            num_workers=num_workers,
-            pin_memory=True if device in ["cuda", "gpu"] else False,
-        )
+        if 'train' in dataset:
+            
+            # define data loaders
+            train_loader = DataLoader(
+                dataset["train"],
+                batch_size=batch_size,
+                collate_fn=partial(pad_collate, padding_value=tokenizer.pad_token_id),
+                num_workers=num_workers,
+                pin_memory=True if device in ["cuda", "gpu"] else False,
+                shuffle=True,
+            )
+        
+        if 'val' in dataset:
+            
+            valid_loader = DataLoader(
+                dataset["val"],
+                batch_size=batch_size,
+                collate_fn=partial(pad_collate, padding_value=tokenizer.pad_token_id),
+                num_workers=num_workers,
+                pin_memory=True if device in ["cuda", "gpu"] else False,
+            )
+        
+        if 'test' in dataset:
+                
+            test_loader = DataLoader(
+                dataset["test"],
+                batch_size=batch_size,
+                collate_fn=partial(pad_collate, padding_value=tokenizer.pad_token_id),
+                num_workers=num_workers,
+                pin_memory=True if device in ["cuda", "gpu"] else False,
+            )
 
     return train_loader, valid_loader, test_loader
