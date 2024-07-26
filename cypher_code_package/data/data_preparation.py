@@ -221,7 +221,6 @@ def get_loaders(
 
     else:
 
-        print('train' in dataset)
         if 'train' in dataset:
             # define data loaders
             train_loader = DataLoader(
@@ -253,7 +252,7 @@ def get_loaders(
                 pin_memory=True if device in ["cuda", "gpu"] else False,
             )
     
-    if 'train' in dataset and 'valid' in dataset:
+    if 'train' in dataset and 'val' in dataset:
         
         return {'train_loader': train_loader, 'valid_loader': valid_loader, 'test_loader': test_loader}
     
