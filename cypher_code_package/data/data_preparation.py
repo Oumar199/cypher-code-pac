@@ -221,8 +221,8 @@ def get_loaders(
 
     else:
 
+        print('train' in dataset)
         if 'train' in dataset:
-            
             # define data loaders
             train_loader = DataLoader(
                 dataset["train"],
