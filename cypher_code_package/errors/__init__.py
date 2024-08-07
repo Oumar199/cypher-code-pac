@@ -4,9 +4,3 @@ class EmptyArtifactException(Exception):
     ):
 
         print(error)
-        
-class TokenizerException(Exception):
-    
-    def __init__(self, error: str):
-        
-        print(error)

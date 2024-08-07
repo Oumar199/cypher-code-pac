@@ -11,6 +11,7 @@ from cypher_code_package import (
     get_peft_model,
 )
 
+
 def print_number_of_trainable_model_parameters(model):
     trainable_model_params = 0
     all_model_params = 0
