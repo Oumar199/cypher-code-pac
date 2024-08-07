@@ -209,6 +209,8 @@ class CodeGeneration(pl.LightningModule):
             input_ids=inputs.input_ids.to(self.device),
             attention_mask=inputs.attention_mask.to(self.device),
             max_new_tokens=self.max_new_tokens,
+            do_sample=True,
+            num_beams=self.num_beams
         )
 
         # decode the labels
