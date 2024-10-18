@@ -55,7 +55,7 @@ class CodeGeneration(pl.LightningModule):
                 model_name, torch_dtype=torch.float32
             )
             
-            self.model = model
+            self.model = self.original_model
         
         else:
 
