@@ -44,29 +44,34 @@ class CodeGeneration(pl.LightningModule):
         splitter="Code Cypher ::",
         padding_side="left",
         num_beams=1,
+        use_peft=False,
     ):
 
         super().__init__()
-
-        self.lora_config = LoraConfig(
-            r=r,  # Rank
-            lora_alpha=lora_alpha,
-            lora_dropout=lora_dropout,
-            bias=bias,
-            task_type=TaskType.CAUSAL_LM,  # CodeGen
-        )
-
+        
         if model is None:
 
             self.original_model = CodeGenForCausalLM.from_pretrained(
-                model_name, torch_dtype=torch.bfloat16
+                model_name, torch_dtype=torch.float32
             )
-
-            self.model = get_peft_model(self.original_model, self.lora_config)
-
+            
+            self.model = model
+        
         else:
 
             self.model = model
+        
+        if use_peft:
+            
+            self.lora_config = LoraConfig(
+                r=r,  # Rank
+                lora_alpha=lora_alpha,
+                lora_dropout=lora_dropout,
+                bias=bias,
+                task_type=TaskType.CAUSAL_LM,  # CodeGen
+            )
+
+            self.model = get_peft_model(self.original_model, self.lora_config)
 
         print(print_number_of_trainable_model_parameters(self.model))
 
@@ -116,7 +121,7 @@ class CodeGeneration(pl.LightningModule):
             num_training_steps=self.num_training_steps,
         )
 
-        return [optimizer], [{"scheduler": scheduler}]
+        return {'optimizer': optimizer, "lr_scheduler": scheduler}
 
     def training_step(self, batch, batch_idx=None):
 
